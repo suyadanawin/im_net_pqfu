@@ -1,0 +1,12 @@
+torch>=2.2.0
+torchvision>=0.17.0
+pyyaml>=6.0.1
+tqdm>=4.66.1
+pillow>=10.0.0
+numpy>=1.26.0
+pandas>=2.0.0
+scikit-learn>=1.3.0
+matplotlib
+pandas
+seaborn  # makes the charts look much better
+Pillow>=10.0.0
