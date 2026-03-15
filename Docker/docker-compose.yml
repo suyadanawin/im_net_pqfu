@@ -1,0 +1,24 @@
+version: "3.9"
+
+services:
+  tiny-imagenet-phase1:
+    build:
+      context: ..
+      dockerfile: Docker/Dockerfile
+    container_name: tiny_imagenet_phase1
+    
+    volumes:
+      - C:/Users/user2/Documents/IM_net_pqfu/data:/app/data
+      - C:/Users/user2/Documents/IM_net_pqfu/outputs:/app/outputs
+      - C:/Users/user2/Documents/IM_net_pqfu/configs:/configs
+
+    environment:
+      - PYTHONUNBUFFERED=1
+    
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]

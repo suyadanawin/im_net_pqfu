@@ -1,0 +1,6 @@
+git init
+# Create the ignore file and add the heavy folders
+"outputs/" | Out-File -FilePath .gitignore -Encoding utf8
+"data/" | Add-Content -Path .gitignore
+"*.zip" | Add-Content -Path .gitignore
+"__pycache__/" | Add-Content -Path .gitignoreoutputs/checkpoints/

@@ -1,0 +1,13 @@
+Run ID: 2026-03-15_07-36-09
+Device: cuda
+Config: {'project_name': 'phase1_tiny_imagenet_baseline', 'paths': {'data_root': './data/tiny-imagenet-200', 'output_root': './outputs'}, 'dataset': {'name': 'tiny-imagenet-200', 'num_classes': 200, 'image_size': 64, 'num_workers': 4, 'pin_memory': True}, 'train': {'seed': 42, 'device': 'cuda', 'epochs': 10, 'batch_size': 128, 'learning_rate': 0.001, 'weight_decay': 0.0001, 'momentum': 0.9, 'optimizer': 'adam', 'scheduler': 'step', 'step_size': 5, 'gamma': 0.1, 'print_freq': 20, 'save_every': 1}, 'eval': {'batch_size': 256}, 'checkpoint': {'resume': False, 'resume_path': ''}, 'logging': {'log_dir': 'logs', 'checkpoint_dir': 'checkpoints'}}
+Epoch [1/10] | train_loss=4.3695, train_acc=8.69% | val_loss=4.0057, val_acc=12.46%
+Epoch [2/10] | train_loss=3.5651, train_acc=19.26% | val_loss=3.5337, val_acc=20.00%
+Epoch [3/10] | train_loss=3.1592, train_acc=26.72% | val_loss=3.2154, val_acc=26.74%
+Epoch [4/10] | train_loss=2.8598, train_acc=32.58% | val_loss=2.9131, val_acc=32.22%
+Epoch [5/10] | train_loss=2.6231, train_acc=37.29% | val_loss=2.8100, val_acc=33.92%
+Epoch [6/10] | train_loss=2.1504, train_acc=47.70% | val_loss=2.2451, val_acc=45.56%
+Epoch [7/10] | train_loss=2.0171, train_acc=50.50% | val_loss=2.1635, val_acc=47.48%
+Epoch [8/10] | train_loss=1.9360, train_acc=52.19% | val_loss=2.1256, val_acc=48.35%
+Epoch [9/10] | train_loss=1.8606, train_acc=53.97% | val_loss=2.0618, val_acc=49.72%
+Epoch [10/10] | train_loss=1.7940, train_acc=55.27% | val_loss=2.0611, val_acc=49.80%
