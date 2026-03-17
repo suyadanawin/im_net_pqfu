@@ -1,0 +1,41 @@
+{
+  "seed": 42,
+  "device": "cuda",
+  "paths": {
+    "data_root": "./data/tiny-imagenet-200",
+    "output_root": "./outputs",
+    "ckpt_dir": "./outputs_phase2/checkpoints",
+    "log_dir": "./outputs_phase2/logs",
+    "metrics_dir": "./outputs_phase2/metrics",
+    "stats_dir": "./outputs_phase2/stats"
+  },
+  "dataset": {
+    "name": "tiny-imagenet-200",
+    "num_classes": 200,
+    "image_size": 64
+  },
+  "dataloader": {
+    "num_workers": 0,
+    "pin_memory": false
+  },
+  "model": {
+    "name": "resnet18",
+    "pretrained": false
+  },
+  "fl": {
+    "num_clients": 10,
+    "dirichlet_alpha": 0.1,
+    "rounds": 50,
+    "local_epochs": 1,
+    "batch_size": 64,
+    "eval_batch_size": 128,
+    "lr": 0.01,
+    "momentum": 0.9,
+    "weight_decay": 0.0005,
+    "min_samples_per_client": 10
+  },
+  "save": {
+    "save_every_round": true,
+    "save_best_only": false
+  }
+}

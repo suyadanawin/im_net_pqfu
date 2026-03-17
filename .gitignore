@@ -1,6 +1,15 @@
-git init
-# Create the ignore file and add the heavy folders
-"outputs/" | Out-File -FilePath .gitignore -Encoding utf8
-"data/" | Add-Content -Path .gitignore
-"*.zip" | Add-Content -Path .gitignore
-"__pycache__/" | Add-Content -Path .gitignoreoutputs/checkpoints/
+# Datasets
+data/
+tiny-imagenet-200/
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# IDEs
+.vscode/
+.idea/
+
+# Research Outputs
+# We want to keep the logs and results, but ignore the bulk checkpoints
+outputs/checkpoints/round_*.pt

@@ -1,12 +1,29 @@
+# Git
 .git
 .gitignore
+
+# Python
 __pycache__
 *.pyc
 *.pyo
 *.pyd
-*.swp
-*.log
-outputs
+
+# Environments
 .venv
-.env
+env
+ENV
+
+# System
 .DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Outputs
+outputs/
+checkpoints/
+metrics/
+
+# Dataset
+data/

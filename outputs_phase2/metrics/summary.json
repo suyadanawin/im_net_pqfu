@@ -1,0 +1,7 @@
+{
+  "best_val_acc": 35.95,
+  "num_rounds": 50,
+  "num_clients": 10,
+  "dirichlet_alpha": 0.1,
+  "timestamp": "2026-03-15_20-15-24"
+}

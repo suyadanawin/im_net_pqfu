@@ -1,11 +1,11 @@
 version: "3.9"
 
 services:
-  tiny-imagenet-phase1:
+  tiny-imagenet-phase2:
     build:
       context: ..
       dockerfile: Docker/Dockerfile
-    container_name: tiny_imagenet_phase1
+    container_name: tiny_imagenet_phase2
     
     volumes:
       - C:/Users/user2/Documents/IM_net_pqfu/data:/app/data

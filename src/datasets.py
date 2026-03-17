@@ -1,18 +1,209 @@
 import os
-import shutil
-from typing import Tuple
+from typing import Callable, Dict, List, Tuple
 
-from PIL import ImageFile
-from torch.utils.data import DataLoader
-from torchvision import datasets, transforms
-
-ImageFile.LOAD_TRUNCATED_IMAGES = True
+from PIL import Image
+from torch.utils.data import Dataset
+from torchvision import transforms
 
 
-def get_train_transforms(image_size: int = 64):
-    return transforms.Compose([
-        transforms.RandomResizedCrop(image_size, scale=(0.8, 1.0)),
+class TinyImageNetTrainDataset(Dataset):
+    """
+    Tiny-ImageNet-200 training dataset loader.
+
+    Expected structure:
+    tiny-imagenet-200/
+        train/
+            n01443537/
+                images/
+                    *.JPEG
+            ...
+        wnids.txt
+    """
+
+    def __init__(self, root: str, transform: Callable = None):
+        self.root = root
+        self.transform = transform
+
+        self.wnids_path = os.path.join(root, "wnids.txt")
+        self.train_dir = os.path.join(root, "train")
+
+        if not os.path.exists(self.wnids_path):
+            raise FileNotFoundError(f"wnids.txt not found at: {self.wnids_path}")
+        if not os.path.exists(self.train_dir):
+            raise FileNotFoundError(f"train directory not found at: {self.train_dir}")
+
+        self.class_to_idx = self._load_class_to_idx()
+        self.samples, self.targets = self._build_samples()
+
+    def _load_class_to_idx(self) -> Dict[str, int]:
+        with open(self.wnids_path, "r") as f:
+            wnids = [line.strip() for line in f.readlines()]
+        return {wnid: idx for idx, wnid in enumerate(wnids)}
+
+    def _build_samples(self) -> Tuple[List[Tuple[str, int]], List[int]]:
+        samples = []
+        targets = []
+
+        for wnid, class_idx in self.class_to_idx.items():
+            img_dir = os.path.join(self.train_dir, wnid, "images")
+            if not os.path.exists(img_dir):
+                continue
+
+            for file_name in sorted(os.listdir(img_dir)):
+                if file_name.lower().endswith((".jpeg", ".jpg", ".png")):
+                    img_path = os.path.join(img_dir, file_name)
+                    samples.append((img_path, class_idx))
+                    targets.append(class_idx)
+
+        if len(samples) == 0:
+            raise RuntimeError("No training images found in Tiny-ImageNet train split.")
+
+        return samples, targets
+
+    def __len__(self):
+        return len(self.samples)
+
+    def __getitem__(self, index: int):
+        img_path, target = self.samples[index]
+        image = Image.open(img_path).convert("RGB")
+
+        if self.transform is not None:
+            image = self.transform(image)
+
+        return image, target
+
+
+class TinyImageNetValDataset(Dataset):
+    """
+    Tiny-ImageNet-200 validation dataset loader.
+
+    Supports BOTH formats:
+
+    1. Original format:
+       val/
+         images/
+         val_annotations.txt
+
+    2. Reorganized class-folder format:
+       val/
+         n01443537/
+           images/
+             *.JPEG
+         n01629819/
+           images/
+             *.JPEG
+         ...
+    """
+
+    def __init__(self, root: str, transform: Callable = None):
+        self.root = root
+        self.transform = transform
+
+        self.wnids_path = os.path.join(root, "wnids.txt")
+        self.val_dir = os.path.join(root, "val")
+        self.val_images_dir = os.path.join(self.val_dir, "images")
+        self.val_annotations_path = os.path.join(self.val_dir, "val_annotations.txt")
+
+        if not os.path.exists(self.wnids_path):
+            raise FileNotFoundError(f"wnids.txt not found at: {self.wnids_path}")
+        if not os.path.exists(self.val_dir):
+            raise FileNotFoundError(f"val directory not found at: {self.val_dir}")
+
+        self.class_to_idx = self._load_class_to_idx()
+        self.samples, self.targets = self._build_samples()
+
+    def _load_class_to_idx(self) -> Dict[str, int]:
+        with open(self.wnids_path, "r") as f:
+            wnids = [line.strip() for line in f.readlines()]
+        return {wnid: idx for idx, wnid in enumerate(wnids)}
+
+    def _build_samples(self) -> Tuple[List[Tuple[str, int]], List[int]]:
+        # Case 1: original Tiny-ImageNet validation format
+        if os.path.exists(self.val_images_dir) and os.path.exists(self.val_annotations_path):
+            return self._build_from_original_val_format()
+
+        # Case 2: reorganized class-folder validation format
+        return self._build_from_class_folder_format()
+
+    def _build_from_original_val_format(self) -> Tuple[List[Tuple[str, int]], List[int]]:
+        samples = []
+        targets = []
+
+        with open(self.val_annotations_path, "r") as f:
+            lines = f.readlines()
+
+        for line in lines:
+            parts = line.strip().split("\t")
+            if len(parts) < 2:
+                continue
+
+            file_name = parts[0]
+            wnid = parts[1]
+
+            if wnid not in self.class_to_idx:
+                continue
+
+            class_idx = self.class_to_idx[wnid]
+            img_path = os.path.join(self.val_images_dir, file_name)
+
+            if os.path.exists(img_path):
+                samples.append((img_path, class_idx))
+                targets.append(class_idx)
+
+        if len(samples) == 0:
+            raise RuntimeError("No validation images found in original Tiny-ImageNet val format.")
+
+        print("Validation loader: detected original val/images format.")
+        return samples, targets
+
+    def _build_from_class_folder_format(self) -> Tuple[List[Tuple[str, int]], List[int]]:
+        samples = []
+        targets = []
+
+        for wnid, class_idx in self.class_to_idx.items():
+            class_dir = os.path.join(self.val_dir, wnid)
+
+            # Supports both:
+            # val/<wnid>/images/*.JPEG
+            # val/<wnid>/*.JPEG
+            images_dir = os.path.join(class_dir, "images")
+
+            candidate_dirs = []
+            if os.path.exists(images_dir):
+                candidate_dirs.append(images_dir)
+            if os.path.exists(class_dir):
+                candidate_dirs.append(class_dir)
+
+            for candidate_dir in candidate_dirs:
+                for file_name in sorted(os.listdir(candidate_dir)):
+                    file_path = os.path.join(candidate_dir, file_name)
+                    if os.path.isfile(file_path) and file_name.lower().endswith((".jpeg", ".jpg", ".png")):
+                        samples.append((file_path, class_idx))
+                        targets.append(class_idx)
+
+        if len(samples) == 0:
+            raise RuntimeError("No validation images found in reorganized class-folder val format.")
+
+        print("Validation loader: detected reorganized val/<class>/images format.")
+        return samples, targets
+
+    def __len__(self):
+        return len(self.samples)
+
+    def __getitem__(self, index: int):
+        img_path, target = self.samples[index]
+        image = Image.open(img_path).convert("RGB")
+
+        if self.transform is not None:
+            image = self.transform(image)
+
+        return image, target
+
+
+def build_tiny_imagenet_transforms(image_size: int = 64):
+    train_transform = transforms.Compose([
         transforms.RandomHorizontalFlip(),
+        transforms.RandomCrop(image_size, padding=4),
         transforms.ToTensor(),
         transforms.Normalize(
             mean=[0.4802, 0.4481, 0.3975],
@@ -20,10 +211,7 @@ def get_train_transforms(image_size: int = 64):
         ),
     ])
 
-
-def get_val_transforms(image_size: int = 64):
-    return transforms.Compose([
-        transforms.Resize((image_size, image_size)),
+    val_transform = transforms.Compose([
         transforms.ToTensor(),
         transforms.Normalize(
             mean=[0.4802, 0.4481, 0.3975],
@@ -31,164 +219,43 @@ def get_val_transforms(image_size: int = 64):
         ),
     ])
 
-
-def fix_tiny_imagenet_val_folder(data_root: str) -> None:
-    """
-    Tiny-ImageNet validation images are usually stored in:
-      val/images/*.JPEG
-    with labels in:
-      val/val_annotations.txt
-
-    This function reorganizes them into:
-      val/<class_name>/*.JPEG
-
-    It is safe to run multiple times.
-    """
-    val_dir = os.path.join(data_root, "val")
-    images_dir = os.path.join(val_dir, "images")
-    annotations_path = os.path.join(val_dir, "val_annotations.txt")
-
-    if not os.path.isdir(val_dir):
-        raise FileNotFoundError(f"Validation directory not found: {val_dir}")
-
-    if not os.path.isfile(annotations_path):
-        raise FileNotFoundError(f"val_annotations.txt not found: {annotations_path}")
-
-    # If images_dir does not exist, assume folder has already been reorganized
-    if not os.path.isdir(images_dir):
-        print("[INFO] Validation folder already appears fixed. Skipping val reorganization.")
-        return
-
-    print("[INFO] Fixing Tiny-ImageNet validation folder structure...")
-
-    with open(annotations_path, "r", encoding="utf-8") as f:
-        lines = f.readlines()
-
-    moved_count = 0
-    for line in lines:
-        parts = line.strip().split("\t")
-        if len(parts) < 2:
-            continue
-
-        image_name, class_name = parts[0], parts[1]
-        src_path = os.path.join(images_dir, image_name)
-        class_dir = os.path.join(val_dir, class_name)
-        dst_path = os.path.join(class_dir, image_name)
-
-        os.makedirs(class_dir, exist_ok=True)
-
-        if os.path.isfile(src_path) and not os.path.isfile(dst_path):
-            shutil.move(src_path, dst_path)
-            moved_count += 1
-
-    # Remove empty images dir if everything moved
-    if os.path.isdir(images_dir) and len(os.listdir(images_dir)) == 0:
-        os.rmdir(images_dir)
-
-    print(f"[INFO] Validation folder fix complete. Moved {moved_count} images.")
+    return train_transform, val_transform
 
 
-def sanity_check_tiny_imagenet(data_root: str) -> None:
-    """
-    Basic sanity checks for dataset structure.
-    """
-    train_dir = os.path.join(data_root, "train")
-    val_dir = os.path.join(data_root, "val")
-    wnids_path = os.path.join(data_root, "wnids.txt")
+def get_tiny_imagenet_datasets(data_root: str, image_size: int = 64):
+    train_transform, val_transform = build_tiny_imagenet_transforms(image_size=image_size)
 
-    if not os.path.isdir(train_dir):
-        raise FileNotFoundError(f"Train directory not found: {train_dir}")
-    if not os.path.isdir(val_dir):
-        raise FileNotFoundError(f"Val directory not found: {val_dir}")
-    if not os.path.isfile(wnids_path):
-        raise FileNotFoundError(f"wnids.txt not found: {wnids_path}")
-
-    train_classes = sorted([
-        d for d in os.listdir(train_dir)
-        if os.path.isdir(os.path.join(train_dir, d))
-    ])
-    val_classes = sorted([
-        d for d in os.listdir(val_dir)
-        if os.path.isdir(os.path.join(val_dir, d))
-    ])
-
-    with open(wnids_path, "r", encoding="utf-8") as f:
-        wnids = sorted([line.strip() for line in f if line.strip()])
-
-    if len(wnids) != 200:
-        raise ValueError(f"Expected 200 classes in wnids.txt, found {len(wnids)}")
-
-    if len(train_classes) != 200:
-        raise ValueError(f"Expected 200 train class folders, found {len(train_classes)}")
-
-    if len(val_classes) != 200:
-        raise ValueError(f"Expected 200 val class folders after fixing, found {len(val_classes)}")
-
-    if train_classes != wnids:
-        raise ValueError("Train classes do not match wnids.txt")
-
-    if val_classes != wnids:
-        raise ValueError("Val classes do not match wnids.txt")
-
-    print("[INFO] Dataset sanity check passed.")
-    print(f"[INFO] Number of classes: {len(wnids)}")
-
-
-def build_datasets(data_root: str, image_size: int = 64):
-    train_dir = os.path.join(data_root, "train")
-    val_dir = os.path.join(data_root, "val")
-
-    train_dataset = datasets.ImageFolder(
-        root=train_dir,
-        transform=get_train_transforms(image_size=image_size)
+    train_dataset = TinyImageNetTrainDataset(
+        root=data_root,
+        transform=train_transform
     )
 
-    val_dataset = datasets.ImageFolder(
-        root=val_dir,
-        transform=get_val_transforms(image_size=image_size)
+    val_dataset = TinyImageNetValDataset(
+        root=data_root,
+        transform=val_transform
     )
 
     return train_dataset, val_dataset
 
 
-def build_dataloaders(
-    data_root: str,
-    image_size: int,
-    train_batch_size: int,
-    eval_batch_size: int,
-    num_workers: int = 4,
-    pin_memory: bool = True
-) -> Tuple[DataLoader, DataLoader]:
-    train_dataset, val_dataset = build_datasets(data_root, image_size)
+def sanity_check_tiny_imagenet(train_dataset, val_dataset, num_classes: int = 200):
+    print("=" * 60)
+    print("Tiny-ImageNet Sanity Check")
+    print("=" * 60)
+    print(f"Train samples: {len(train_dataset)}")
+    print(f"Val samples:   {len(val_dataset)}")
+    print(f"Train classes: {len(set(train_dataset.targets))}")
+    print(f"Val classes:   {len(set(val_dataset.targets))}")
 
-    train_loader = DataLoader(
-        train_dataset,
-        batch_size=train_batch_size,
-        shuffle=True,
-        num_workers=num_workers,
-        pin_memory=pin_memory
-    )
+    if len(set(train_dataset.targets)) != num_classes:
+        raise ValueError(
+            f"Expected {num_classes} train classes, got {len(set(train_dataset.targets))}"
+        )
 
-    val_loader = DataLoader(
-        val_dataset,
-        batch_size=eval_batch_size,
-        shuffle=False,
-        num_workers=num_workers,
-        pin_memory=pin_memory
-    )
+    if len(set(val_dataset.targets)) != num_classes:
+        raise ValueError(
+            f"Expected {num_classes} val classes, got {len(set(val_dataset.targets))}"
+        )
 
-    return train_loader, val_loader
-
-
-def print_dataset_summary(train_loader: DataLoader, val_loader: DataLoader) -> None:
-    train_dataset = train_loader.dataset
-    val_dataset = val_loader.dataset
-
-    print("[INFO] Dataset summary")
-    print(f"       Train samples: {len(train_dataset)}")
-    print(f"       Val samples:   {len(val_dataset)}")
-    print(f"       Num classes:   {len(train_dataset.classes)}")
-
-    x, y = train_dataset[0]
-    print(f"[INFO] One training sample tensor shape: {tuple(x.shape)}")
-    print(f"[INFO] One training sample label index: {y}")
+    print("Sanity check passed.")
+    print("=" * 60)

@@ -1,104 +1,132 @@
+import json
 import os
 import random
-import time
-import json
-from typing import Dict, Any
+from datetime import datetime
+from typing import Dict, List
 
 import numpy as np
+import pandas as pd
 import torch
 import yaml
+from torch.utils.data import DataLoader
+from tqdm import tqdm
 
 
-def load_config(config_path: str) -> Dict[str, Any]:
-    with open(config_path, "r", encoding="utf-8") as f:
+def load_yaml(path: str) -> dict:
+    with open(path, "r") as f:
         return yaml.safe_load(f)
 
 
-def set_seed(seed: int) -> None:
+def set_seed(seed: int = 42):
     random.seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
 
-    # More reproducible, slightly slower
-    torch.backends.cudnn.deterministic = True
-    torch.backends.cudnn.benchmark = False
 
-
-def get_device(device_name: str) -> torch.device:
-    if device_name.lower() == "cuda" and torch.cuda.is_available():
-        return torch.device("cuda")
-    return torch.device("cpu")
-
-
-def ensure_dir(path: str) -> None:
+def ensure_dir(path: str):
     os.makedirs(path, exist_ok=True)
 
 
-def prepare_output_dirs(output_root: str, log_dir_name: str, ckpt_dir_name: str):
-    log_dir = os.path.join(output_root, log_dir_name)
-    ckpt_dir = os.path.join(output_root, ckpt_dir_name)
-    ensure_dir(output_root)
-    ensure_dir(log_dir)
-    ensure_dir(ckpt_dir)
-    return log_dir, ckpt_dir
+"""def prepare_output_dirs(config: dict):
+    ensure_dir(config["paths"]["output_root"])
+    ensure_dir(config["paths"]["ckpt_dir"])
+    ensure_dir(config["paths"]["log_dir"])
+    ensure_dir(config["paths"]["metrics_dir"])
+    ensure_dir(config["paths"]["stats_dir"])"""
+
+def prepare_output_dirs(config: dict):
+    paths = config["paths"]
+
+    if "output_root" not in paths:
+        raise KeyError(
+            "Missing 'paths.output_root' in config_phase2.yaml. "
+            "Please add output_root under paths."
+        )
+
+    ensure_dir(paths["output_root"])
+    ensure_dir(paths["ckpt_dir"])
+    ensure_dir(paths["log_dir"])
+    ensure_dir(paths["metrics_dir"])
+    ensure_dir(paths["stats_dir"])
 
 
-def save_json(data: Dict[str, Any], path: str) -> None:
-    with open(path, "w", encoding="utf-8") as f:
+def save_json(data: dict, path: str):
+    with open(path, "w") as f:
         json.dump(data, f, indent=2)
 
 
-def timestamp() -> str:
-    return time.strftime("%Y-%m-%d_%H-%M-%S")
+def save_metrics_csv(metrics: List[Dict], path: str):
+    df = pd.DataFrame(metrics)
+    df.to_csv(path, index=False)
 
 
-class AverageMeter:
-    def __init__(self, name: str):
-        self.name = name
-        self.reset()
-
-    def reset(self):
-        self.val = 0.0
-        self.sum = 0.0
-        self.count = 0
-        self.avg = 0.0
-
-    def update(self, val: float, n: int = 1):
-        self.val = float(val)
-        self.sum += float(val) * n
-        self.count += n
-        self.avg = self.sum / self.count if self.count != 0 else 0.0
+def get_timestamp():
+    return datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
 
-def accuracy(output: torch.Tensor, target: torch.Tensor) -> float:
+def accuracy_from_logits(logits, labels, return_count=False):
+    preds = torch.argmax(logits, dim=1)
+    correct = (preds == labels).sum().item()
+    if return_count:
+        return correct
+    return correct / labels.size(0)
+
+
+def evaluate_model(model, dataset, batch_size: int, num_workers: int, pin_memory: bool, device: str):
+    loader = DataLoader(
+        dataset,
+        batch_size=batch_size,
+        shuffle=False,
+        num_workers=num_workers,
+        pin_memory=pin_memory
+    )
+
+    criterion = torch.nn.CrossEntropyLoss()
+    model.eval()
+
+    total_loss = 0.0
+    total_correct = 0
+    total_samples = 0
+
     with torch.no_grad():
-        preds = torch.argmax(output, dim=1)
-        correct = (preds == target).sum().item()
-        total = target.size(0)
-        return 100.0 * correct / total
+        pbar = tqdm(loader, desc="Validation", leave=False)
+        for images, labels in pbar:
+            images = images.to(device, non_blocking=True)
+            labels = labels.to(device, non_blocking=True)
+
+            outputs = model(images)
+            loss = criterion(outputs, labels)
+
+            batch_size_now = labels.size(0)
+            total_loss += loss.item() * batch_size_now
+            total_correct += accuracy_from_logits(outputs, labels, return_count=True)
+            total_samples += batch_size_now
+
+            avg_loss = total_loss / total_samples
+            avg_acc = 100.0 * total_correct / total_samples
+            pbar.set_postfix(loss=f"{avg_loss:.4f}", acc=f"{avg_acc:.2f}%")
+
+    metrics = {
+        "val_loss": total_loss / total_samples,
+        "val_acc": 100.0 * total_correct / total_samples
+    }
+    return metrics
 
 
-def save_checkpoint(state: Dict[str, Any], checkpoint_path: str) -> None:
-    torch.save(state, checkpoint_path)
+def save_checkpoint(state: dict, path: str):
+    torch.save(state, path)
 
 
-def load_checkpoint(checkpoint_path: str, model, optimizer=None, scheduler=None, map_location="cpu"):
-    checkpoint = torch.load(checkpoint_path, map_location=map_location)
-    model.load_state_dict(checkpoint["model_state_dict"])
+def print_round_summary(round_idx: int, client_results: List[Dict], val_metrics: Dict):
+    avg_client_loss = sum(r["train_loss"] for r in client_results) / len(client_results)
+    avg_client_acc = sum(r["train_acc"] for r in client_results) / len(client_results)
 
-    if optimizer is not None and "optimizer_state_dict" in checkpoint:
-        optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
-
-    if scheduler is not None and "scheduler_state_dict" in checkpoint and checkpoint["scheduler_state_dict"] is not None:
-        scheduler.load_state_dict(checkpoint["scheduler_state_dict"])
-
-    start_epoch = checkpoint.get("epoch", 0) + 1
-    best_val_acc = checkpoint.get("best_val_acc", 0.0)
-
-    return model, optimizer, scheduler, start_epoch, best_val_acc
-
-
-def append_log(log_file: str, text: str) -> None:
-    with open(log_file, "a", encoding="utf-8") as f:
-        f.write(text + "\n")
+    print("=" * 80)
+    print(f"Round {round_idx} Summary")
+    print("=" * 80)
+    print(f"Avg client train loss: {avg_client_loss:.4f}")
+    print(f"Avg client train acc:  {avg_client_acc:.2f}%")
+    print(f"Global val loss:       {val_metrics['val_loss']:.4f}")
+    print(f"Global val acc:        {val_metrics['val_acc']:.2f}%")
+    print("=" * 80)

@@ -20,10 +20,10 @@ COPY project/ /app/
 
 # 4. Copy config.yaml from project folder to the root of /app
 # (Your project has config.yaml inside 'project', so we put it in /app)
-COPY project/config.yaml /app/config.yaml
+COPY project/config2.yaml /app/config2.yaml
 
 # 5. Create output directories
 RUN mkdir -p /outputs/logs /outputs/checkpoints
 
 # Start training (No /configs/ needed if config is now in /app)
-CMD ["python", "train_phase1.py", "--config", "config.yaml"]
+CMD ["python", "train_phase2_fl.py", "--config", "config2.yaml"]
