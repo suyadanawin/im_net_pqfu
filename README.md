@@ -9,7 +9,7 @@ In this phase, we established a robust global baseline model using a 200-class d
 * **Dataset:** Tiny-ImageNet-200
 * **Data Partitioning:** Non-IID Dirichlet Distribution ($\alpha = 0.5$)
 * **Federated Strategy:** FedAvg
-* **Clients:** 5 active clients
+* **Clients:** 10 active clients
 * **Communication Rounds:** 50
 * **Hyperparameters:** $lr=0.01$, $momentum=0.9$, $batch\_size=32$
 
