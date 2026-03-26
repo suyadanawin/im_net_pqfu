@@ -1,6 +1,7 @@
 import json
 import os
 import random
+import time
 from datetime import datetime
 from typing import Dict, List
 
@@ -17,6 +18,11 @@ def load_yaml(path: str) -> dict:
         return yaml.safe_load(f)
 
 
+def save_yaml(data: dict, path: str):
+    with open(path, "w") as f:
+        yaml.safe_dump(data, f, sort_keys=False)
+
+
 def set_seed(seed: int = 42):
     random.seed(seed)
     np.random.seed(seed)
@@ -28,27 +34,13 @@ def ensure_dir(path: str):
     os.makedirs(path, exist_ok=True)
 
 
-"""def prepare_output_dirs(config: dict):
-    ensure_dir(config["paths"]["output_root"])
+def prepare_output_dirs(config: dict):
+    ensure_dir(config["paths"]["phase3_root"])
     ensure_dir(config["paths"]["ckpt_dir"])
     ensure_dir(config["paths"]["log_dir"])
     ensure_dir(config["paths"]["metrics_dir"])
-    ensure_dir(config["paths"]["stats_dir"])"""
-
-def prepare_output_dirs(config: dict):
-    paths = config["paths"]
-
-    if "output_root" not in paths:
-        raise KeyError(
-            "Missing 'paths.output_root' in config_phase2.yaml. "
-            "Please add output_root under paths."
-        )
-
-    ensure_dir(paths["output_root"])
-    ensure_dir(paths["ckpt_dir"])
-    ensure_dir(paths["log_dir"])
-    ensure_dir(paths["metrics_dir"])
-    ensure_dir(paths["stats_dir"])
+    ensure_dir(config["paths"]["stats_dir"])
+    ensure_dir(config["paths"]["plots_dir"])
 
 
 def save_json(data: dict, path: str):
@@ -56,8 +48,20 @@ def save_json(data: dict, path: str):
         json.dump(data, f, indent=2)
 
 
+def load_json(path: str):
+    with open(path, "r") as f:
+        return json.load(f)
+
+
 def save_metrics_csv(metrics: List[Dict], path: str):
-    df = pd.DataFrame(metrics)
+    pd.DataFrame(metrics).to_csv(path, index=False)
+
+
+def append_metrics_csv(rows: List[Dict], path: str):
+    df = pd.DataFrame(rows)
+    if os.path.exists(path):
+        old = pd.read_csv(path)
+        df = pd.concat([old, df], ignore_index=True)
     df.to_csv(path, index=False)
 
 
@@ -107,26 +111,37 @@ def evaluate_model(model, dataset, batch_size: int, num_workers: int, pin_memory
             avg_acc = 100.0 * total_correct / total_samples
             pbar.set_postfix(loss=f"{avg_loss:.4f}", acc=f"{avg_acc:.2f}%")
 
-    metrics = {
-        "val_loss": total_loss / total_samples,
-        "val_acc": 100.0 * total_correct / total_samples
+    return {
+        "loss": total_loss / total_samples,
+        "acc": 100.0 * total_correct / total_samples
     }
-    return metrics
 
 
 def save_checkpoint(state: dict, path: str):
     torch.save(state, path)
 
 
-def print_round_summary(round_idx: int, client_results: List[Dict], val_metrics: Dict):
+def load_checkpoint(path: str, map_location="cpu"):
+    return torch.load(path, map_location=map_location)
+
+
+def print_round_summary(title: str, round_idx: int, client_results: List[Dict], val_metrics: Dict):
     avg_client_loss = sum(r["train_loss"] for r in client_results) / len(client_results)
     avg_client_acc = sum(r["train_acc"] for r in client_results) / len(client_results)
 
     print("=" * 80)
-    print(f"Round {round_idx} Summary")
+    print(f"{title} Round {round_idx} Summary")
     print("=" * 80)
     print(f"Avg client train loss: {avg_client_loss:.4f}")
     print(f"Avg client train acc:  {avg_client_acc:.2f}%")
-    print(f"Global val loss:       {val_metrics['val_loss']:.4f}")
-    print(f"Global val acc:        {val_metrics['val_acc']:.2f}%")
+    print(f"Global val loss:       {val_metrics['loss']:.4f}")
+    print(f"Global val acc:        {val_metrics['acc']:.2f}%")
     print("=" * 80)
+
+
+def now():
+    return time.perf_counter()
+
+
+def elapsed_seconds(start_time: float, end_time: float) -> float:
+    return float(end_time - start_time)

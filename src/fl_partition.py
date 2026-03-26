@@ -6,6 +6,14 @@ from typing import Dict, List
 import numpy as np
 import pandas as pd
 
+import json
+from typing import Dict, List
+
+
+def load_client_indices(json_path: str) -> Dict[int, List[int]]:
+    with open(json_path, "r") as f:
+        raw = json.load(f)
+    return {int(k): v for k, v in raw.items()}
 
 def dirichlet_partition(
     targets: List[int],

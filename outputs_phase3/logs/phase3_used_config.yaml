@@ -1,0 +1,71 @@
+seed: 42
+device: cuda
+paths:
+  data_root: ./data/tiny-imagenet-200
+  phase2_root: ./outputs_phase2
+  full_model_ckpt: ./outputs_phase2/checkpoints/global_best.pt
+  client_indices_path: ./outputs_phase2/stats/client_indices.json
+  phase3_root: ./outputs_phase3
+  ckpt_dir: ./outputs_phase3/checkpoints
+  log_dir: ./outputs_phase3/logs
+  metrics_dir: ./outputs_phase3/metrics
+  stats_dir: ./outputs_phase3/stats
+  plots_dir: ./outputs_phase3/plots
+dataset:
+  name: tiny-imagenet-200
+  num_classes: 200
+  image_size: 64
+dataloader:
+  num_workers: 4
+  pin_memory: true
+model:
+  name: resnet18
+  pretrained: false
+fl:
+  num_clients: 10
+  dirichlet_alpha: 0.1
+  rounds: 50
+  local_epochs: 1
+  batch_size: 64
+  eval_batch_size: 128
+  lr: 0.01
+  momentum: 0.9
+  weight_decay: 0.0005
+forgetting:
+  forget_client_id: 1
+oracle:
+  rounds: 50
+  local_epochs: 1
+  batch_size: 64
+  eval_batch_size: 128
+  lr: 0.01
+  momentum: 0.9
+  weight_decay: 0.0005
+  save_every_round: true
+unlearning:
+  correction_rounds: 15
+  local_epochs: 1
+  batch_size: 64
+  eval_batch_size: 128
+  lr: 0.005
+  momentum: 0.9
+  weight_decay: 0.0005
+  save_every_round: true
+tracking:
+  save_per_layer_every_round: true
+  save_last_layer_every_round: true
+  save_roundwise_distances: true
+  save_update_norms: true
+comparison:
+  use_best_oracle_for_final_eval: true
+  use_best_unlearned_for_final_eval: true
+theory_note:
+  claim: 'Warm-start correction is treated as an approximate unlearning method. Oracle
+    retraining is the gold-standard baseline. Weight distance is used only as an empirical
+    proximity metric, not a standalone deletion guarantee.
+
+    '
+  intended_use: The saved outputs are intended to support a later theorem subsection
+    on convergence to a bounded neighborhood of the oracle baseline under explicit
+    assumptions such as smoothness, bounded client drift, bounded local optimization
+    error, and sufficiently small correction steps.

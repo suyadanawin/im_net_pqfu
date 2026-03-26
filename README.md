@@ -1,5 +1,11 @@
+<<<<<<< HEAD
 ## 📈 Phase 2: Federated Training Baseline
 In this phase, we established a robust global baseline model trained under extreme data skew. This serves as the "Pre-unlearning" state for Phase 3.
+=======
+# IM_NET_PQFU
+## Phase 2: Federated Training (Large-Scale Baseline)
+In this phase, we established a robust global baseline model using a 200-class dataset to serve as the foundation for Certified Unlearning evaluations.
+>>>>>>> 6dc170827 (Oracle Running)
 
 ### Experiment Setup
 * **Model Architecture:** ResNet-18 (modified for 64x64 input)

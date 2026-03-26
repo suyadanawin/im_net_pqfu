@@ -1,0 +1,50 @@
+seed: 42
+device: "cuda"
+
+paths:
+  data_root: "./data/tiny-imagenet-200"
+  phase2_root: "./outputs_phase2"
+  full_model_ckpt: "./outputs_phase2/checkpoints/global_best.pt"
+  client_indices_path: "./outputs_phase2/stats/client_indices.json"
+
+  phase3_root: "./outputs_phase3"
+  ckpt_dir: "./outputs_phase3/checkpoints"
+  metrics_dir: "./outputs_phase3/metrics"
+  plots_dir: "./outputs_phase3/plots"
+
+  oracle_ckpt: "./outputs_phase3/checkpoints/oracle_final.pt"
+  unlearn_ckpt: "./outputs_phase3/checkpoints/unlearn_final.pt"
+
+dataset:
+  name: "tiny-imagenet-200"
+  num_classes: 200
+  image_size: 64
+
+dataloader:
+  num_workers: 4
+  pin_memory: true
+
+model:
+  name: "resnet18"
+  pretrained: false
+
+fl:
+  num_clients: 10
+  dirichlet_alpha: 0.1
+  rounds: 50
+  local_epochs: 1
+  batch_size: 64
+  eval_batch_size: 128
+  lr: 0.01
+  momentum: 0.9
+  weight_decay: 0.0005
+
+forgetting:
+  forget_client_id: 1
+
+unlearning:
+  correction_rounds: 10
+  finetune_epochs: 1
+
+mia:
+  threshold: 0.5
