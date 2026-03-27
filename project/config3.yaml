@@ -40,7 +40,7 @@ fl:
   weight_decay: 0.0005
 
 forgetting:
-  forget_client_id: 1
+  forget_client_id: 5
 
 unlearning:
   correction_rounds: 10

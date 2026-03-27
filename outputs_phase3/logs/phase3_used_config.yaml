@@ -32,7 +32,7 @@ fl:
   momentum: 0.9
   weight_decay: 0.0005
 forgetting:
-  forget_client_id: 1
+  forget_client_id: 5
 oracle:
   rounds: 50
   local_epochs: 1
