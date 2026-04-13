@@ -1,0 +1,259 @@
+[33mcommit 2912dfeb10871b66c2d3c4c73ca260e6d02ed127[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m
+Author: SuYadanaWin <ssuyadana@gmail.com>
+Date:   Fri Mar 27 19:51:29 2026 +0800
+
+    unlearning forget id 5
+
+ forget_comparison.png                              |   Bin [31m0[m -> [32m25846[m bytes
+ mia_comparison.png                                 |   Bin [31m0[m -> [32m23803[m bytes
+ outputs_phase3/checkpoints/oracle_best.pt          |     2 [32m+[m[31m-[m
+ outputs_phase3/checkpoints/oracle_final.pt         |     2 [32m+[m[31m-[m
+ outputs_phase3/checkpoints/oracle_round_1.pt       |     2 [32m+[m[31m-[m
+ outputs_phase3/checkpoints/oracle_round_10.pt      |     2 [32m+[m[31m-[m
+ outputs_phase3/checkpoints/oracle_round_11.pt      |     2 [32m+[m[31m-[m
+ outputs_phase3/checkpoints/oracle_round_12.pt      |     2 [32m+[m[31m-[m
+ outputs_phase3/checkpoints/oracle_round_13.pt      |     2 [32m+[m[31m-[m
+ outputs_phase3/checkpoints/oracle_round_14.pt      |     2 [32m+[m[31m-[m
+ outputs_phase3/checkpoints/oracle_round_15.pt      |     2 [32m+[m[31m-[m
+ outputs_phase3/checkpoints/oracle_round_16.pt      |     2 [32m+[m[31m-[m
+ outputs_phase3/checkpoints/oracle_round_17.pt      |     2 [32m+[m[31m-[m
+ outputs_phase3/checkpoints/oracle_round_18.pt      |     2 [32m+[m[31m-[m
+ outputs_phase3/checkpoints/oracle_round_19.pt      |     2 [32m+[m[31m-[m
+ outputs_phase3/checkpoints/oracle_round_2.pt       |     2 [32m+[m[31m-[m
+ outputs_phase3/checkpoints/oracle_round_20.pt      |     2 [32m+[m[31m-[m
+ outputs_phase3/checkpoints/oracle_round_21.pt      |     2 [32m+[m[31m-[m
+ outputs_phase3/checkpoints/oracle_round_22.pt      |     2 [32m+[m[31m-[m
+ outputs_phase3/checkpoints/oracle_round_23.pt      |     2 [32m+[m[31m-[m
+ outputs_phase3/checkpoints/oracle_round_24.pt      |     2 [32m+[m[31m-[m
+ outputs_phase3/checkpoints/oracle_round_25.pt      |     2 [32m+[m[31m-[m
+ outputs_phase3/checkpoints/oracle_round_26.pt      |     2 [32m+[m[31m-[m
+ outputs_phase3/checkpoints/oracle_round_27.pt      |     2 [32m+[m[31m-[m
+ outputs_phase3/checkpoints/oracle_round_28.pt      |     2 [32m+[m[31m-[m
+ outputs_phase3/checkpoints/oracle_round_29.pt      |     2 [32m+[m[31m-[m
+ outputs_phase3/checkpoints/oracle_round_3.pt       |     2 [32m+[m[31m-[m
+ outputs_phase3/checkpoints/oracle_round_30.pt      |     2 [32m+[m[31m-[m
+ outputs_phase3/checkpoints/oracle_round_31.pt      |     2 [32m+[m[31m-[m
+ outputs_phase3/checkpoints/oracle_round_32.pt      |     2 [32m+[m[31m-[m
+ outputs_phase3/checkpoints/oracle_round_33.pt      |     2 [32m+[m[31m-[m
+ outputs_phase3/checkpoints/oracle_round_34.pt      |     2 [32m+[m[31m-[m
+ outputs_phase3/checkpoints/oracle_round_35.pt      |     2 [32m+[m[31m-[m
+ outputs_phase3/checkpoints/oracle_round_36.pt      |     2 [32m+[m[31m-[m
+ outputs_phase3/checkpoints/oracle_round_37.pt      |     2 [32m+[m[31m-[m
+ outputs_phase3/checkpoints/oracle_round_38.pt      |     2 [32m+[m[31m-[m
+ outputs_phase3/checkpoints/oracle_round_39.pt      |     2 [32m+[m[31m-[m
+ outputs_phase3/checkpoints/oracle_round_4.pt       |     2 [32m+[m[31m-[m
+ outputs_phase3/checkpoints/oracle_round_40.pt      |     2 [32m+[m[31m-[m
+ outputs_phase3/checkpoints/oracle_round_41.pt      |     2 [32m+[m[31m-[m
+ outputs_phase3/checkpoints/oracle_round_42.pt      |     2 [32m+[m[31m-[m
+ outputs_phase3/checkpoints/oracle_round_43.pt      |     2 [32m+[m[31m-[m
+ outputs_phase3/checkpoints/oracle_round_44.pt      |     2 [32m+[m[31m-[m
+ outputs_phase3/checkpoints/oracle_round_45.pt      |     2 [32m+[m[31m-[m
+ outputs_phase3/checkpoints/oracle_round_46.pt      |     2 [32m+[m[31m-[m
+ outputs_phase3/checkpoints/oracle_round_47.pt      |     2 [32m+[m[31m-[m
+ outputs_phase3/checkpoints/oracle_round_48.pt      |     2 [32m+[m[31m-[m
+ outputs_phase3/checkpoints/oracle_round_49.pt      |     2 [32m+[m[31m-[m
+ outputs_phase3/checkpoints/oracle_round_5.pt       |     2 [32m+[m[31m-[m
+ outputs_phase3/checkpoints/oracle_round_50.pt      |     2 [32m+[m[31m-[m
+ outputs_phase3/checkpoints/oracle_round_6.pt       |     2 [32m+[m[31m-[m
+ outputs_phase3/checkpoints/oracle_round_7.pt       |     2 [32m+[m[31m-[m
+ outputs_phase3/checkpoints/oracle_round_8.pt       |     2 [32m+[m[31m-[m
+ outputs_phase3/checkpoints/oracle_round_9.pt       |     2 [32m+[m[31m-[m
+ outputs_phase3/checkpoints/unlearn_best.pt         |     2 [32m+[m[31m-[m
+ outputs_phase3/checkpoints/unlearn_final.pt        |     2 [32m+[m[31m-[m
+ outputs_phase3/logs/phase3_used_config.yaml        |     2 [32m+[m[31m-[m
+ outputs_phase3/metrics/distance_summary.csv        |     3 [32m+[m
+ outputs_phase3/metrics/forget_retain_results.csv   |    12 [32m+[m[31m-[m
+ outputs_phase3/metrics/mia_results.csv             |     6 [32m+[m[31m-[m
+ .../metrics/oracle_last_layer_roundwise.csv        |   100 [32m+[m[31m-[m
+ .../metrics/oracle_per_layer_roundwise.csv         | 12200 [32m+++++++++[m[31m----------[m
+ outputs_phase3/metrics/oracle_round_metrics.csv    |   100 [32m+[m[31m-[m
+ outputs_phase3/metrics/oracle_summary.json         |     6 [32m+[m[31m-[m
+ outputs_phase3/metrics/phase3_model_comparison.csv |     4 [32m+[m[31m-[m
+ .../metrics/unlearn_per_layer_roundwise.csv        |    63 [32m+[m
+ outputs_phase3/metrics/unlearn_round_metrics.csv   |    20 [32m+[m[31m-[m
+ outputs_phase3/metrics/unlearn_summary.json        |     6 [32m+[m[31m-[m
+ outputs_phase3/plots/phase3_accuracy_compare.png   |   Bin [31m0[m -> [32m16024[m bytes
+ outputs_phase3/plots/phase3_distance_to_oracle.png |   Bin [31m0[m -> [32m14077[m bytes
+ outputs_phase3/plots/phase3_forget_retain.png      |   Bin [31m0[m -> [32m18722[m bytes
+ outputs_phase3/plots/phase3_mia.png                |   Bin [31m0[m -> [32m13481[m bytes
+ project/config3.yaml                               |     2 [32m+[m[31m-[m
+ project/mia_comparison.py                          |    21 [32m+[m
+ project/oracle.yaml                                |     2 [32m+[m[31m-[m
+ project/plot_forget_result.py                      |    26 [32m+[m
+ project/retain_plot.py                             |    43 [32m+[m
+ retain_comparison.png                              |   Bin [31m0[m -> [32m26620[m bytes
+ 78 files changed, 6440 insertions(+), 6284 deletions(-)
+
+[33mcommit ffd7c2dd32dfc835f910d2d338896f0c823c39b6[m
+Author: SuYadanaWin <ssuyadana@gmail.com>
+Date:   Fri Mar 27 00:59:10 2026 +0800
+
+    unlearning output
+
+ README.md                                          |    6 [32m+[m
+ compare_weights.py                                 |   58 [32m+[m
+ outputs_phase3/checkpoints/oracle_best.pt          |    3 [32m+[m
+ outputs_phase3/checkpoints/oracle_final.pt         |    3 [32m+[m
+ outputs_phase3/checkpoints/oracle_round_1.pt       |    3 [32m+[m
+ outputs_phase3/checkpoints/oracle_round_10.pt      |    3 [32m+[m
+ outputs_phase3/checkpoints/oracle_round_11.pt      |    3 [32m+[m
+ outputs_phase3/checkpoints/oracle_round_12.pt      |    3 [32m+[m
+ outputs_phase3/checkpoints/oracle_round_13.pt      |    3 [32m+[m
+ outputs_phase3/checkpoints/oracle_round_14.pt      |    3 [32m+[m
+ outputs_phase3/checkpoints/oracle_round_15.pt      |    3 [32m+[m
+ outputs_phase3/checkpoints/oracle_round_16.pt      |    3 [32m+[m
+ outputs_phase3/checkpoints/oracle_round_17.pt      |    3 [32m+[m
+ outputs_phase3/checkpoints/oracle_round_18.pt      |    3 [32m+[m
+ outputs_phase3/checkpoints/oracle_round_19.pt      |    3 [32m+[m
+ outputs_phase3/checkpoints/oracle_round_2.pt       |    3 [32m+[m
+ outputs_phase3/checkpoints/oracle_round_20.pt      |    3 [32m+[m
+ outputs_phase3/checkpoints/oracle_round_21.pt      |    3 [32m+[m
+ outputs_phase3/checkpoints/oracle_round_22.pt      |    3 [32m+[m
+ outputs_phase3/checkpoints/oracle_round_23.pt      |    3 [32m+[m
+ outputs_phase3/checkpoints/oracle_round_24.pt      |    3 [32m+[m
+ outputs_phase3/checkpoints/oracle_round_25.pt      |    3 [32m+[m
+ outputs_phase3/checkpoints/oracle_round_26.pt      |    3 [32m+[m
+ outputs_phase3/checkpoints/oracle_round_27.pt      |    3 [32m+[m
+ outputs_phase3/checkpoints/oracle_round_28.pt      |    3 [32m+[m
+ outputs_phase3/checkpoints/oracle_round_29.pt      |    3 [32m+[m
+ outputs_phase3/checkpoints/oracle_round_3.pt       |    3 [32m+[m
+ outputs_phase3/checkpoints/oracle_round_30.pt      |    3 [32m+[m
+ outputs_phase3/checkpoints/oracle_round_31.pt      |    3 [32m+[m
+ outputs_phase3/checkpoints/oracle_round_32.pt      |    3 [32m+[m
+ outputs_phase3/checkpoints/oracle_round_33.pt      |    3 [32m+[m
+ outputs_phase3/checkpoints/oracle_round_34.pt      |    3 [32m+[m
+ outputs_phase3/checkpoints/oracle_round_35.pt      |    3 [32m+[m
+ outputs_phase3/checkpoints/oracle_round_36.pt      |    3 [32m+[m
+ outputs_phase3/checkpoints/oracle_round_37.pt      |    3 [32m+[m
+ outputs_phase3/checkpoints/oracle_round_38.pt      |    3 [32m+[m
+ outputs_phase3/checkpoints/oracle_round_39.pt      |    3 [32m+[m
+ outputs_phase3/checkpoints/oracle_round_4.pt       |    3 [32m+[m
+ outputs_phase3/checkpoints/oracle_round_40.pt      |    3 [32m+[m
+ outputs_phase3/checkpoints/oracle_round_41.pt      |    3 [32m+[m
+ outputs_phase3/checkpoints/oracle_round_42.pt      |    3 [32m+[m
+ outputs_phase3/checkpoints/oracle_round_43.pt      |    3 [32m+[m
+ outputs_phase3/checkpoints/oracle_round_44.pt      |    3 [32m+[m
+ outputs_phase3/checkpoints/oracle_round_45.pt      |    3 [32m+[m
+ outputs_phase3/checkpoints/oracle_round_46.pt      |    3 [32m+[m
+ outputs_phase3/checkpoints/oracle_round_47.pt      |    3 [32m+[m
+ outputs_phase3/checkpoints/oracle_round_48.pt      |    3 [32m+[m
+ outputs_phase3/checkpoints/oracle_round_49.pt      |    3 [32m+[m
+ outputs_phase3/checkpoints/oracle_round_5.pt       |    3 [32m+[m
+ outputs_phase3/checkpoints/oracle_round_50.pt      |    3 [32m+[m
+ outputs_phase3/checkpoints/oracle_round_6.pt       |    3 [32m+[m
+ outputs_phase3/checkpoints/oracle_round_7.pt       |    3 [32m+[m
+ outputs_phase3/checkpoints/oracle_round_8.pt       |    3 [32m+[m
+ outputs_phase3/checkpoints/oracle_round_9.pt       |    3 [32m+[m
+ outputs_phase3/checkpoints/unlearn_best.pt         |    3 [32m+[m
+ outputs_phase3/checkpoints/unlearn_final.pt        |    3 [32m+[m
+ outputs_phase3/logs/phase3_used_config.yaml        |   71 [32m+[m
+ outputs_phase3/metrics/forget_retain_results.csv   |    7 [32m+[m
+ outputs_phase3/metrics/mia_results.csv             |    4 [32m+[m
+ .../metrics/oracle_last_layer_roundwise.csv        |   51 [32m+[m
+ .../metrics/oracle_per_layer_roundwise.csv         | 6101 [32m++++++++++++++++++++[m
+ outputs_phase3/metrics/oracle_round_metrics.csv    |   51 [32m+[m
+ outputs_phase3/metrics/oracle_summary.json         |    6 [32m+[m
+ outputs_phase3/metrics/phase3_model_comparison.csv |    4 [32m+[m
+ outputs_phase3/metrics/unlearn_round_metrics.csv   |   11 [32m+[m
+ outputs_phase3/metrics/unlearn_summary.json        |    6 [32m+[m
+ phase3_analysis_report.png                         |  Bin [31m0[m -> [32m592505[m bytes
+ project/compare_phase3.py                          |  184 [32m+[m
+ project/compute_oracle_distance.py                 |   59 [32m+[m
+ project/config3.yaml                               |   50 [32m+[m
+ project/eval_forget_retain.py                      |   81 [32m+[m
+ project/eval_phase3_models.py                      |   64 [32m+[m
+ project/mia_phase3.py                              |  100 [32m+[m
+ project/oracle.yaml                                |   83 [32m+[m
+ project/phase3_visualization.py                    |   83 [32m+[m
+ project/plot_phase3_results.py                     |   54 [32m+[m
+ project/run_unlearning.py                          |  103 [32m+[m
+ project/train_oracle.py                            |   88 [32m+[m
+ project/train_unlearn.py                           |  125 [32m+[m
+ src/fl_partition.py                                |    8 [32m+[m
+ src/metrics.py                                     |   63 [32m+[m
+ src/oracle.py                                      |  172 [32m+[m
+ src/phase3_utils.py                                |  222 [32m+[m
+ src/unlearning.py                                  |  199 [32m+[m
+ src/utils.py                                       |   71 [32m+[m[31m-[m
+ 85 files changed, 8319 insertions(+), 28 deletions(-)
+
+[33mcommit 8aa6a545052c5425ece6c070776bb02121854a56[m
+Author: SuYadanaWin <ssuyadana@gmail.com>
+Date:   Tue Mar 17 16:29:19 2026 +0800
+
+    Docs: Update image paths to phase2_figures directory
+
+ outputs_phase2/classdistibution_virtualization.py  |  35 [32m+++++++++++++++++++++[m
+ .../plots/data_heterogeneity_heatmap.png           | Bin [31m0[m -> [32m209564[m bytes
+ 2 files changed, 35 insertions(+)
+
+[33mcommit e71811c4d3100f7d18ea9325bd86e083b7fe2848[m[33m ([m[1;32mphase2[m[33m)[m
+Author: SuYadanaWin <ssuyadana@gmail.com>
+Date:   Tue Mar 17 16:29:19 2026 +0800
+
+    Docs: Update image paths to phase2_figures directory
+
+ README.md                                          |   4 [32m+[m[31m--[m
+ outputs_phase2/classdistibution_virtualization.py  |  35 [32m+++++++++++++++++++++[m
+ .../plots/data_heterogeneity_heatmap.png           | Bin [31m0[m -> [32m209564[m bytes
+ 3 files changed, 37 insertions(+), 2 deletions(-)
+
+[33mcommit e4529bce0a99be7c04c2ffc2d42bae98111b4600[m
+Author: SuYadanaWin <ssuyadana@gmail.com>
+Date:   Tue Mar 17 16:23:16 2026 +0800
+
+    Docs: Update image paths to phase2_figures directory
+
+ README.md | 34 [32m++++++++++++++++++++++++++++[m[31m------[m
+ 1 file changed, 28 insertions(+), 6 deletions(-)
+
+[33mcommit 42ba40f4b997190635d252b039e6a064985f39ac[m
+Author: SuYadanaWin <ssuyadana@gmail.com>
+Date:   Tue Mar 17 16:05:20 2026 +0800
+
+    Docs: Update Phase 2 visuals grid in README
+
+ README.md | 48 [32m++++++++++++++++++++++++++++++[m[31m------------------[m
+ 1 file changed, 30 insertions(+), 18 deletions(-)
+
+[33mcommit a2d2f9f4a99c05ad43487d998a47e2083862df9e[m
+Author: Su Yadana Win <69068912+SuYadanaWin@users.noreply.github.com>
+Date:   Tue Mar 17 15:54:19 2026 +0800
+
+    Update number of active clients from 5 to 10
+
+ README.md | 4 [32m++[m[31m--[m
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+[33mcommit 8496a436da02c40b131d6cae76ee2a291cbbc8f0[m[33m ([m[1;31morigin/phase2[m[33m)[m
+Author: SuYadanaWin <ssuyadana@gmail.com>
+Date:   Tue Mar 17 15:49:56 2026 +0800
+
+    Docs: Update README with Phase 2 results and visualizations
+
+ README.md | 33 [32m++++++++++++++++++++++++++++++++[m[31m-[m
+ 1 file changed, 32 insertions(+), 1 deletion(-)
+
+[33mcommit 31ba5dbb17a30edf347866fe2899b991b926aaee[m
+Author: SuYadanaWin <ssuyadana@gmail.com>
+Date:   Tue Mar 17 15:32:44 2026 +0800
+
+    Phase 2 Complete: 50 rounds Federated Training on Tiny-ImageNet (35.95% Acc)
+
+ .gitattributes                                     |      1 [32m+[m
+ .gitignore                                         |     21 [32m+[m[31m-[m
+ Docker/.dockerignore                               |     27 [32m+[m[31m-[m
+ Docker/Dockerfile                                  |      4 [32m+[m[31m-[m
+ Docker/docker-compose.yml                          |      4 [32m+[m[31m-[m
+ outputs/checkpoints/phase1_best.pt                 |      3 [32m+[m
+ outputs/checkpoints/phase1_epoch_1.pt              |      3 [32m+[m
+ outputs/checkpoints/phase1_epoch_10.pt             |      3 [32m+[m
+ outputs/checkpoints/phase1_epoch_2.pt              |      3 [32m+[m
+ outputs/checkpoints/phase1_epoch_3.pt              |      3 [32m+[m
+ outputs/checkpoints/phase1_epoch_4.pt              |      3 [32m+[m
+ outputs/checkpoints/phase1_epoch_5.pt              |      3 [32m+[m
+ outputs/checkpoints/phase1_epoch_6.pt              |      3 [32m+[m
+ outputs/checkpoints/phase1_epoch_7.pt              |      3 [32m+[m
+ outputs/checkpoints/phase1_epoch_8.pt              |      3 [32m+[m
+ outputs/checkpoints/phase1_epoch_9.pt              |      3 [32m+[m
+ outputs/checkpoints/phase1_last.pt                 |      3 

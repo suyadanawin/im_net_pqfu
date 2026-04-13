@@ -1,0 +1,3 @@
+pair,full_model_l2,last_layer_l2
+full_vs_oracle,32.33475897430618,10.032312171044964
+unlearn_vs_oracle,34.14461225948456,11.39994008157427

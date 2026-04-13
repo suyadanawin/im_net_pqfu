@@ -18,7 +18,7 @@ from src.metrics import save_rows_csv
 
 
 def main():
-    config = load_yaml("project/oracle.yaml")
+    config = load_yaml("project/config3.yaml")
     set_seed(config["seed"])
     prepare_output_dirs(config)
 

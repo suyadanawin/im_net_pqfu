@@ -10,3 +10,5 @@ matplotlib
 pandas
 seaborn  # makes the charts look much better
 Pillow>=10.0.0
+PyYAML==6.0.1
+tenseal==0.3.15

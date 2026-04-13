@@ -1,0 +1,3 @@
+Setting,Rounds,Best Val Acc (%),Last Val Acc (%),Mean Encrypt Time (s),Mean Aggregation Time (s),Mean Decrypt Time (s),Mean Ciphertext Size (bytes)
+Plaintext FL,50,35.95,35.95,0.0,0.0,0.0,0.0
+CKKS-FL,10,16.68,16.68,85.75884263515472,15.148766374588012,1.6306794881820679,

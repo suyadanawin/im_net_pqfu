@@ -37,6 +37,9 @@ def main():
         config["dataset"]["image_size"]
     )
 
+    print("Validation size:", len(val_dataset))
+    print("Evaluation note: global utility is computed on val_dataset.")
+
     val_loader = DataLoader(
         val_dataset,
         batch_size=config["fl"]["eval_batch_size"],

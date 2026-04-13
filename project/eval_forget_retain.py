@@ -60,14 +60,14 @@ def main():
         ("unlearn", config["paths"]["unlearn_ckpt"]),
     ]:
         r1 = eval_model_on_loader(label, ckpt_path, forget_loader, config, device)
-        r1["split"] = "forget"
+        r1["split"] = "forget_train_subset"
         rows.append(r1)
 
         r2 = eval_model_on_loader(label, ckpt_path, retain_loader, config, device)
-        r2["split"] = "retain"
+        r2["split"] = "retain_train_subset"
         rows.append(r2)
 
-    out_csv = os.path.join(config["paths"]["metrics_dir"], "forget_retain_results.csv")
+    out_csv = os.path.join(config["paths"]["metrics_dir"], "forget_retain_train_subset_results.csv")
     with open(out_csv, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=["model", "split", "loss", "acc"])
         writer.writeheader()
@@ -75,7 +75,12 @@ def main():
 
     for row in rows:
         print(row)
-
+    print("Forget client:", forget_client_id)
+    print("Forget loader source:", type(forget_dataset))
+    print("Retain loader source:", type(retain_dataset))
+    print("Forget size:", len(forget_dataset))
+    print("Retain size:", len(retain_dataset))
+    print("Evaluation note: forget/retain loaders are built from train_dataset client subsets.")
 
 if __name__ == "__main__":
     main()

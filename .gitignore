@@ -1,15 +1,30 @@
-# Datasets
-data/
-tiny-imagenet-200/
-
-# Python cache
+# Python
 __pycache__/
-*.py[cod]
+*.pyc
 
-# IDEs
+# Dataset
+data/
+
+# Outputs
+outputs_phase2/
+outputs_phase3/
+outputs_ckks/
+outputs_pq_*
+
+# Checkpoints
+*.pt
+*.pth
+
+# Logs
+logs/
+*.log
+
+# Docker cache
+*.tar
+
+# VS Code
 .vscode/
-.idea/
 
-# Research Outputs
-# We want to keep the logs and results, but ignore the bulk checkpoints
-outputs/checkpoints/round_*.pt
+# OS
+.DS_Store
+Thumbs.db

@@ -1,0 +1,7 @@
+{
+  "metrics_csv": "./outputs_ckks_unlearning/oracle/metrics/oracle_ckks_round_metrics.csv",
+  "best_checkpoint": "./outputs_ckks_unlearning/oracle/checkpoints/oracle_best_ckks.pt",
+  "last_checkpoint": "./outputs_ckks_unlearning/oracle/checkpoints/oracle_last_ckks.pt",
+  "best_val_acc": 35.15,
+  "forget_client_id": 0
+}

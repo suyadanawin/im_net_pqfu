@@ -61,11 +61,11 @@ def main():
     model = load_checkpoint(model, config["paths"]["full_model_ckpt"], device)
 
     optimizer = optim.SGD(
-        model.parameters(),
-        lr=config["fl"]["lr"],
-        momentum=config["fl"]["momentum"],
-        weight_decay=config["fl"]["weight_decay"]
-    )
+    model.parameters(),
+    lr=config["unlearning"].get("lr", 1e-3),
+    momentum=config["unlearning"].get("momentum", config["fl"]["momentum"]),
+    weight_decay=config["unlearning"].get("weight_decay", config["fl"]["weight_decay"])
+)
 
     correction_rounds = config["unlearning"]["correction_rounds"]
     finetune_epochs = config["unlearning"]["finetune_epochs"]

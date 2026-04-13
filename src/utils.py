@@ -14,12 +14,12 @@ from tqdm import tqdm
 
 
 def load_yaml(path: str) -> dict:
-    with open(path, "r") as f:
+    with open(path, "r", encoding="utf-8") as f:
         return yaml.safe_load(f)
 
 
 def save_yaml(data: dict, path: str):
-    with open(path, "w") as f:
+    with open(path, "w", encoding="utf-8") as f:
         yaml.safe_dump(data, f, sort_keys=False)
 
 
@@ -35,21 +35,29 @@ def ensure_dir(path: str):
 
 
 def prepare_output_dirs(config: dict):
-    ensure_dir(config["paths"]["phase3_root"])
-    ensure_dir(config["paths"]["ckpt_dir"])
-    ensure_dir(config["paths"]["log_dir"])
-    ensure_dir(config["paths"]["metrics_dir"])
-    ensure_dir(config["paths"]["stats_dir"])
-    ensure_dir(config["paths"]["plots_dir"])
+    if "phase3_root" in config["paths"]:
+        ensure_dir(config["paths"]["phase3_root"])
+    if "output_root" in config["paths"]:
+        ensure_dir(config["paths"]["output_root"])
+    if "ckpt_dir" in config["paths"]:
+        ensure_dir(config["paths"]["ckpt_dir"])
+    if "log_dir" in config["paths"]:
+        ensure_dir(config["paths"]["log_dir"])
+    if "metrics_dir" in config["paths"]:
+        ensure_dir(config["paths"]["metrics_dir"])
+    if "stats_dir" in config["paths"]:
+        ensure_dir(config["paths"]["stats_dir"])
+    if "plots_dir" in config["paths"]:
+        ensure_dir(config["paths"]["plots_dir"])
 
 
 def save_json(data: dict, path: str):
-    with open(path, "w") as f:
+    with open(path, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2)
 
 
 def load_json(path: str):
-    with open(path, "r") as f:
+    with open(path, "r", encoding="utf-8") as f:
         return json.load(f)
 
 

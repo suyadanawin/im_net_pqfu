@@ -1,0 +1,7 @@
+{
+  "metrics_csv": "./outputs_ckks_unlearning/unlearn/metrics/ckks_unlearn_round_metrics.csv",
+  "final_checkpoint": "./outputs_ckks_unlearning/unlearn/checkpoints/ckks_unlearn_final.pt",
+  "best_checkpoint": "./outputs_ckks_unlearning/unlearn/checkpoints/ckks_unlearn_best.pt",
+  "best_val_acc": 22.73,
+  "forget_client_id": 0
+}

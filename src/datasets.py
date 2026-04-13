@@ -1,6 +1,7 @@
 import os
 from typing import Callable, Dict, List, Tuple
 
+import numpy as np
 from PIL import Image
 from torch.utils.data import Dataset
 from torchvision import transforms
@@ -36,7 +37,7 @@ class TinyImageNetTrainDataset(Dataset):
         self.samples, self.targets = self._build_samples()
 
     def _load_class_to_idx(self) -> Dict[str, int]:
-        with open(self.wnids_path, "r") as f:
+        with open(self.wnids_path, "r", encoding="utf-8") as f:
             wnids = [line.strip() for line in f.readlines()]
         return {wnid: idx for idx, wnid in enumerate(wnids)}
 
@@ -113,23 +114,21 @@ class TinyImageNetValDataset(Dataset):
         self.samples, self.targets = self._build_samples()
 
     def _load_class_to_idx(self) -> Dict[str, int]:
-        with open(self.wnids_path, "r") as f:
+        with open(self.wnids_path, "r", encoding="utf-8") as f:
             wnids = [line.strip() for line in f.readlines()]
         return {wnid: idx for idx, wnid in enumerate(wnids)}
 
     def _build_samples(self) -> Tuple[List[Tuple[str, int]], List[int]]:
-        # Case 1: original Tiny-ImageNet validation format
         if os.path.exists(self.val_images_dir) and os.path.exists(self.val_annotations_path):
             return self._build_from_original_val_format()
 
-        # Case 2: reorganized class-folder validation format
         return self._build_from_class_folder_format()
 
     def _build_from_original_val_format(self) -> Tuple[List[Tuple[str, int]], List[int]]:
         samples = []
         targets = []
 
-        with open(self.val_annotations_path, "r") as f:
+        with open(self.val_annotations_path, "r", encoding="utf-8") as f:
             lines = f.readlines()
 
         for line in lines:
@@ -162,10 +161,6 @@ class TinyImageNetValDataset(Dataset):
 
         for wnid, class_idx in self.class_to_idx.items():
             class_dir = os.path.join(self.val_dir, wnid)
-
-            # Supports both:
-            # val/<wnid>/images/*.JPEG
-            # val/<wnid>/*.JPEG
             images_dir = os.path.join(class_dir, "images")
 
             candidate_dirs = []
@@ -207,7 +202,7 @@ def build_tiny_imagenet_transforms(image_size: int = 64):
         transforms.ToTensor(),
         transforms.Normalize(
             mean=[0.4802, 0.4481, 0.3975],
-            std=[0.2302, 0.2265, 0.2262]
+            std=[0.2302, 0.2265, 0.2262],
         ),
     ])
 
@@ -215,7 +210,7 @@ def build_tiny_imagenet_transforms(image_size: int = 64):
         transforms.ToTensor(),
         transforms.Normalize(
             mean=[0.4802, 0.4481, 0.3975],
-            std=[0.2302, 0.2265, 0.2262]
+            std=[0.2302, 0.2265, 0.2262],
         ),
     ])
 
@@ -227,15 +222,55 @@ def get_tiny_imagenet_datasets(data_root: str, image_size: int = 64):
 
     train_dataset = TinyImageNetTrainDataset(
         root=data_root,
-        transform=train_transform
+        transform=train_transform,
     )
 
     val_dataset = TinyImageNetValDataset(
         root=data_root,
-        transform=val_transform
+        transform=val_transform,
     )
 
     return train_dataset, val_dataset
+
+
+def build_tiny_imagenet_datasets(data_root: str, image_size: int = 64):
+    """
+    Alias used by the CKKS training script.
+    """
+    return get_tiny_imagenet_datasets(data_root=data_root, image_size=image_size)
+
+
+def dirichlet_partition_indices(
+    labels: np.ndarray,
+    num_clients: int,
+    alpha: float,
+    seed: int,
+) -> List[List[int]]:
+    """
+    Partition dataset indices across clients using a Dirichlet distribution.
+    """
+    rng = np.random.default_rng(seed)
+    labels = np.asarray(labels)
+    num_classes = len(np.unique(labels))
+
+    class_indices = [np.where(labels == c)[0] for c in range(num_classes)]
+    client_indices = [[] for _ in range(num_clients)]
+
+    for class_id in range(num_classes):
+        indices = class_indices[class_id].copy()
+        rng.shuffle(indices)
+
+        proportions = rng.dirichlet(np.repeat(alpha, num_clients))
+        split_points = (np.cumsum(proportions) * len(indices)).astype(int)[:-1]
+        split_indices = np.split(indices, split_points)
+
+        for client_id, part in enumerate(split_indices):
+            client_indices[client_id].extend(part.tolist())
+
+    for client_id in range(num_clients):
+        rng.shuffle(client_indices[client_id])
+
+    return client_indices
 
 
 def sanity_check_tiny_imagenet(train_dataset, val_dataset, num_classes: int = 200):

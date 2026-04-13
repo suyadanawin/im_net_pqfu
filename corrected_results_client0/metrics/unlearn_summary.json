@@ -1,0 +1,6 @@
+{
+  "forget_client_id": 0,
+  "correction_rounds": 10,
+  "best_val_acc": 40.24,
+  "best_round": 7
+}

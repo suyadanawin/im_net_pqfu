@@ -1,0 +1,6 @@
+{
+  "full_vs_oracle_l2": 28487.81341885078,
+  "unlearn_vs_oracle_l2": 21377.198178529372,
+  "full_vs_oracle_last_layer_l2": 17.21927089907122,
+  "unlearn_vs_oracle_last_layer_l2": 17.424834536310026
+}
